@@ -71,7 +71,7 @@ module.exports = function(app) {
       if ( typeof deviceid != "undefined" )
       {
         sendCommand(app, deviceid, req.body)
-        res.send("Executed command for plugin " + plugin.id)
+        res.send({"autopilot" : "changed"})
       }
     })
   }  
@@ -85,7 +85,7 @@ module.exports = function(app) {
     }
   }
   
-  plugin.id = "raymarineautopilot"
+  plugin.id = "raymarineautopilotfork"
   plugin.name = "Raymarine Autopilot"
   plugin.description = "Plugin that controls a Raymarine autopilot"
 

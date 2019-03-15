@@ -1,15 +1,15 @@
 {
-  "name": "signalk-raymarine-autopilot",
-  "version": "1.1.1",
+  "name": "signalk-siri-autopilot",
+  "version": "1.1.2",
   "description": "Plugin that controls a Raymarine autopilot",
   "main": "index.js",
   "scripts": {
-    "test": "$NODE $npm_package_main"
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [
     "signalk-node-server-plugin"
   ],
-  "author": "scott@scottbender.net",
+  "author": "beat84@me.com",
   "license": "ISC",
   "dependencies": {
     "baconjs": "^0.7.88",
