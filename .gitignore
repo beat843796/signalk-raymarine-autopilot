@@ -1,0 +1,55 @@
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# Coverage
+lib-cov
+coverage
+.nyc_output
+
+# Grunt / node-waf
+.grunt
+.lock-wscript
+
+# Compiled binary addons
+build/Release
+
+# Dependency directories
+node_modules/
+jspm_packages/
+
+# npm / yarn / pnpm caches
+.npm
+.yarn
+.pnpm-store
+.yarn-integrity
+
+# Optional REPL history
+.node_repl_history
+
+# Env files
+.env
+.env.local
+.env.*.local
+
+# TypeScript build output
+dist/
+build/
+*.tsbuildinfo
+
+# IDE
+.idea/
+.vscode/
+*.iml
+
+# macOS
+.DS_Store
