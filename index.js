@@ -66,15 +66,35 @@ module.exports = function(app) {
     }
   };
 
+  // Handles one autopilot command POST. Shared by both the legacy /plugins/
+  // route and the /signalk/v1/api/ route below.
+  function handleCommand(req, res) {
+    if (typeof deviceid != "undefined") {
+      sendCommand(app, deviceid, req.body)
+      res.send({"autopilot" : "changed"})
+    } else {
+      res.status(503).send({"error": "deviceid not configured"})
+    }
+  }
+
+  // Legacy / admin route — kept for backwards compat.
+  // Full URL: /plugins/raymarineautopilotfork/command
+  // NOTE: /plugins/* is hardcoded admin-only by signalk-server
+  // (tokensecurity.js `app.use('/plugins', adminAuthenticationMiddleware(false))`),
+  // so non-admin tokens hit 401 here. Clients that have a readwrite (not
+  // admin) token should use the signalKApiRoutes endpoint below.
   plugin.registerWithRouter = function(router) {
-    router.post("/command", (req, res) => {
-      if ( typeof deviceid != "undefined" )
-      {
-        sendCommand(app, deviceid, req.body)
-        res.send({"autopilot" : "changed"})
-      }
-    })
-  }  
+    router.post("/command", (req, res) => handleCommand(req, res))
+  }
+
+  // Readwrite-accessible route — mounted under /signalk/v1/api/ by
+  // signalk-server, which requires only "write" permission on POST (i.e.
+  // readwrite or admin; readonly is rejected).
+  // Full URL: /signalk/v1/api/raymarineautopilotfork/command
+  plugin.signalKApiRoutes = function(router) {
+    router.post("/raymarineautopilotfork/command", (req, res) => handleCommand(req, res))
+    return router
+  }
   
   plugin.stop = function() {
     timers.forEach(timer => {
