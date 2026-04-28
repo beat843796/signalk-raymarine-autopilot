@@ -46,7 +46,8 @@ module.exports = function(app) {
   var plugin = {}
   var deviceid
   var timers = []
-  
+  var commandListener = null
+
   plugin.start = function(props) {
     deviceid = props.deviceid
 
@@ -56,7 +57,7 @@ module.exports = function(app) {
                                 default_src)
         app.emit('nmea2000out', msg)
       }, 1000))
-      
+
       timers.push(setInterval(() => {
         const msg = util.format(keep_alive2, (new Date()).toISOString(),
                                 default_src)
@@ -64,6 +65,25 @@ module.exports = function(app) {
         app.emit('nmea2000out', msg)
       }, 2000))
     }
+
+    /*
+     * Cross-plugin command channel: another plugin (e.g. the BLE
+     * peripheral in signalk-minimalvesseldata-plugin) can send
+     * autopilot commands without going through HTTP by emitting
+     * 'raymarineAutopilotCommand' on the shared `app` EventEmitter
+     * with a command_json identical to what the REST endpoint
+     * accepts: { action, value }. Decoupled at the event level so
+     * neither plugin needs to require() the other.
+     */
+    commandListener = function (command_json) {
+      if (typeof deviceid != "undefined") {
+        app.debug("raymarineAutopilotCommand: %j", command_json)
+        sendCommand(app, deviceid, command_json)
+      } else {
+        app.error("raymarineAutopilotCommand received but deviceid not configured")
+      }
+    }
+    app.on('raymarineAutopilotCommand', commandListener)
   };
 
   // Handles one autopilot command POST. Shared by both the legacy /plugins/
@@ -102,6 +122,10 @@ module.exports = function(app) {
     })
     if (unsubscribe) {
       unsubscribe()
+    }
+    if (commandListener) {
+      app.removeListener('raymarineAutopilotCommand', commandListener)
+      commandListener = null
     }
   }
   
