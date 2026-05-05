@@ -68,7 +68,7 @@ module.exports = function(app) {
 
     /*
      * Cross-plugin command channel: another plugin (e.g. the BLE
-     * peripheral in signalk-minimalvesseldata-plugin) can send
+     * peripheral in signalk-garmin-smartwatchapp-companion) can send
      * autopilot commands without going through HTTP by emitting
      * 'raymarineAutopilotCommand' on the shared `app` EventEmitter
      * with a command_json identical to what the REST endpoint
